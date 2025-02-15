@@ -2,6 +2,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import path from 'path';
 
+
+
 export default {
     mode: 'production',
     entry: {
@@ -25,6 +27,7 @@ export default {
             }]
         })
     ],
+    
     module: {
         rules: [
             {
