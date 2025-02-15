@@ -21,8 +21,25 @@ export default {
         new CopyPlugin({
             patterns: [{
                 from: path.resolve('manifest.json'),
-                
+                to: path.resolve('dist')
             }]
         })
-    ]
+    ],
+    module: {
+        rules: [
+            {
+                test: /.(js\jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            '@babel/preset-env',
+                            ['@babel/preset-react', {'runtime': 'automatic'}]
+                        ]
+                    }
+                }
+            }
+        ]
+    }
 }
