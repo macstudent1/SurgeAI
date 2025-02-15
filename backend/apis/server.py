@@ -21,10 +21,12 @@ app.add_middleware(
   allow_headers=["*"],  # Allow all headers
 )
 
+# Database Connection URL
+DATABASE_URL = "postgresql://postgres:password@localhost:5432/surgeai"
+
 # Database connection
 def get_db():
-    db = None # Get database connection
-    # Unimplemented
+    ...
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
