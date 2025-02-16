@@ -27,10 +27,18 @@ export default {
             template: './src/index.html'
         }),
         new CopyPlugin({
-            patterns: [{
-                from: path.resolve('manifest.json'),
-                to: path.resolve(__dirname, 'dist')
-            }]
+            patterns: [
+                { from: path.resolve(__dirname, 'src/popup.html'), to: path.resolve(__dirname, 'dist') }, // ✅ Copy popup.html
+                { from: path.resolve(__dirname, 'src/styles/popup.css'), to: path.resolve(__dirname, 'dist/styles') }, // ✅ Copy popup.css
+                { 
+                    from: path.resolve(__dirname, 'manifest.json'), 
+                    to: path.resolve(__dirname, 'dist'),
+                    transform(content) {
+                        const manifest= JSON.parse(content.toString());
+                        manifest.action.default_popup = "popup.html";
+                        return JSON.stringify(manifest, null, 2);
+                    } } // ✅ Copy manifest.json
+            ]
         })
     ],
     

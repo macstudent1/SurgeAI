@@ -1,26 +1,17 @@
-import '../styles/popup.css';
+import 'styles/popup.css';
 
 document.addEventListener("DOMContentLoaded", function () {
-    const button = document.getElementById("changeText");
-    const text = document.getElementById("displayText");
-    document.getElementById("changeColor").addEventListener("click", function () {
-        text.textContent = "You clicked the button!";
-        text.style.color = "red"; 
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                function: changePageBackground
-            });
-        });
+    const loginButton = document.getElementById("loginButton");
+
+    loginButton.addEventListener("click", function () {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (username && password) {
+            alert("Logging in...");
+        } else {
+            alert("Please enter your username and password.");
+        }
     });
 });
 
-//function changePageBackground() {
-//    document.body.style.backgroundColor = "lightblue";
-//}
-
-import '../styles/popup.scss';
-
-document.getElementById('go-to-options').addEventListener('click', () => {
-  chrome.runtime.openOptionsPage();
-});

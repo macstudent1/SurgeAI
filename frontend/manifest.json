@@ -4,7 +4,8 @@
     "description": "Reccommends music based on user needs",
     "version": "1.0.0",
     "action": {
-        "default_popup": "src/popup.html"
+        "default_popup": "popup.html"
+        
     },
 
     "background": {

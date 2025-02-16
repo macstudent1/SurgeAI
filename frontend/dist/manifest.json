@@ -1,22 +1,22 @@
 {
-    "manifest_version": 3,
-    "name": "Music Reccomendation Chrome Extension",
-    "description": "Reccommends music based on user needs",
-    "version": "1.0.0",
-    "action": {
-        "default_popup": "src/popup.html"
-    },
-
-    "background": {
-        "service worker": "background.js"
-    },
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["contentScript.js"]
-        }
-    ]
+  "manifest_version": 3,
+  "name": "Music Reccomendation Chrome Extension",
+  "description": "Reccommends music based on user needs",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "contentScript.js"
+      ]
+    }
+  ]
 }
-
-
-  
