@@ -8,4 +8,5 @@ starlette
 uvicorn
 psycopg2
 bcrypt
-gunicorn
+uvicorn
+numpy
