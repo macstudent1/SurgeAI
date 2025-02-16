@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 from starlette.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
+from database import Base, engine, get_db
+from database import create_user, get_user_by_email, get_user_by_username
 
 app = FastAPI()
 
@@ -21,11 +23,6 @@ app.add_middleware(
   allow_headers=["*"],  # Allow all headers
 )
 
-# Database connection
-def get_db():
-    db = None # Get database connection
-    # Unimplemented
-
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -41,37 +38,41 @@ def get_password_hash(password):
 # Verify password
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
-
-# Create User
-def create_user(db: Session, user: UserCreate):
-    # Unimplemented
-    db_user = None # Create user
-    db.add(db_user)
-    return db_user
     
+# Routes
+@app.get("/")
+def read_root():
+    return {"Backend": "Working"}
+
 # Signup
 @app.post("/signup")
 def signup(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = None # Get user by email
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    try: 
+        db_user = get_user_by_email(db, user.email)
+        print(db_user)
+    except:
+        print("Error: Username or email already exists")
     
-    db_user = None # Get user by username
-    if db_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
+    try:
+        user.password = get_password_hash(user.password)
+        test = create_user(db, user)
+    except Exception as e:
+        print("Error creating user")
+        print(e)
     
-    # Calls Create User function
-    
-    return "Signs Up" 
+    return test
 
 # Login
 @app.post("/login")
 def login(request: Request, user: UserCreate, db: Session = Depends(get_db)):
-    db_user = None # Get user by email
+    db_user = get_user_by_username(db, user.username)
+    
     if not db_user:
         raise HTTPException(status_code=400, detail="Invalid credentials")
+    
     if not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
+    
     return "Logs In"
 
 # Connect to Spotify
@@ -79,3 +80,4 @@ def login(request: Request, user: UserCreate, db: Session = Depends(get_db)):
 def connect_spotify(request: Request):
     # Unimplemented
     return "Connect Spotify"
+
