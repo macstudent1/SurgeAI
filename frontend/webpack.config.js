@@ -14,7 +14,7 @@ export default {
         react: './src/react/index.jsx'
     },
     output: {
-        path: path.resolve(__dirname, '/dist'),
+        path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
         clean: true
     },
@@ -29,7 +29,7 @@ export default {
         new CopyPlugin({
             patterns: [{
                 from: path.resolve('manifest.json'),
-                to: path.resolve('dist')
+                to: path.resolve(__dirname, 'dist')
             }]
         })
     ],
