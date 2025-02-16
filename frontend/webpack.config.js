@@ -1,8 +1,10 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import path from 'path';
+import { fileURLToPath } from "url";
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
     mode: 'production',
@@ -12,9 +14,13 @@ export default {
         react: './src/react/index.jsx'
     },
     output: {
-        path: path.resolve('dist'),
+        path: path.resolve(__dirname, '/dist'),
         filename: '[name].js',
         clean: true
+    },
+    resolve: {
+        modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
+        extensions: ['.js', '.jsx']
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -31,7 +37,7 @@ export default {
     module: {
         rules: [
             {
-                test: /.(js\jsx)$/,
+                test: /\.js$|jsx/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
