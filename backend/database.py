@@ -41,7 +41,7 @@ def create_user(db, user):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return db_user.id
 
 # Get User by Email
 def get_user_by_email(db, email):

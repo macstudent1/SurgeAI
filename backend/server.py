@@ -50,17 +50,19 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
     try: 
         db_user = get_user_by_email(db, user.email)
         print(db_user)
-    except:
+    except Exception as e:
+        print(e)
         print("Error: Username or email already exists")
     
     try:
         user.password = get_password_hash(user.password)
-        test = create_user(db, user)
+        user_id = create_user(db, user)
+        print("User created successfully")
     except Exception as e:
-        print("Error creating user")
         print(e)
+        print("Error creating user")
     
-    return test
+    return user_id
 
 # Login
 @app.post("/login")
@@ -73,7 +75,16 @@ def login(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     if not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
     
-    return "Logs In"
+    try: 
+        if db_user and verify_password(user.password, db_user.password):
+            print("Logged In Successfully")
+            return db_user.id
+        else:
+            print("Login Failed")
+            return "Login Failed"
+    except Exception as e:
+        print(e)
+        print("Error logging in")
 
 # Connect to Spotify
 @app.get("/connect_spotify")
