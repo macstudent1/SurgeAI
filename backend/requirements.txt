@@ -1,0 +1,11 @@
+opencv-python
+deepface
+sqlalchemy
+fastapi
+pydantic
+passlib
+starlette
+uvicorn
+psycopg2
+bcrypt
+gunicorn
