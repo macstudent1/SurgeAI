@@ -1,4 +1,6 @@
 import cv2
+import time
+from collections import Counter
 from deepface import DeepFace
 
 # Initialize webcam
@@ -7,6 +9,10 @@ cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Error: Could not open webcam.")
     exit()
+
+emotion_list = []
+start_time = time.time()
+duration = 20
 
 while True:
     ret, frame = cap.read()
@@ -23,7 +29,8 @@ while True:
         else:
             emotion = "Unknown"
 
-        print(f"Emotion: {emotion}")  # Print detected emotion
+        emotion_list.append(emotion)
+       # print(f"Emotion: {emotion}")  # Print detected emotions
 
         # Display emotion on the frame
         cv2.putText(frame, f"Emotion: {emotion}", (50, 50),
@@ -35,6 +42,9 @@ while True:
     # Show the webcam feed
     cv2.imshow("Emotion Detector", frame)
 
+    if time.time()-start_time> duration:
+        break
+
     # Exit if 'q' is pressed
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
@@ -42,5 +52,12 @@ while True:
 # Release resources
 cap.release()
 cv2.destroyAllWindows()
+
+# Determine the final detected emotion that is most common from the list of emotions in the array
+if emotion_list:
+    final_detected_emotion = Counter(emotion_list).most_common(1)[0][0]
+    print(f"Final detected emotion: {final_detected_emotion}")
+else:
+     final_detected_emotion = "Unable to detect emotion"
 
 
