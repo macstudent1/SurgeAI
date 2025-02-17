@@ -10,3 +10,6 @@ psycopg2
 bcrypt
 uvicorn
 numpy
+websockets 
+python-multipart
+tf-keras
