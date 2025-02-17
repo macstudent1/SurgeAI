@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine, get_db
 from database import create_user, get_user_by_email, get_user_by_username
 from fastapi import FastAPI, WebSocket
-from opencv.emotion_detect_shared import detect_emotion
+# from opencv.emotion_detect_shared import detect_emotion
+from spotify_code import SpotifyService
 # from opencv.emotion_detect_ws import detect_emotion
 # from deepface import DeepFace
 # from fastapi.websockets import WebSocketDisconnect
@@ -132,8 +133,29 @@ def get_emotion(request: Request):
 #         await websocket.close()  # Close the WebSocket connection after sending the response
 
 # Connect to Spotify
-@app.get("/connect_spotify")
-def connect_spotify(request: Request):
-    # Unimplemented
-    return "Connect Spotify"
 
+# HACKY WAY FOR NOW
+# IN Reality, there should be a procedure to let users login to spotify through the backend
+# @app.get("/get_reccomendations")
+# def connect_spotify(request: Request):
+    
+#     # Unimplemented
+#     return "Connect Spotify"
+spotify_service = SpotifyService()
+
+
+@app.get("/recommendations/{emotion}")
+async def get_recommendations(emotion: str):
+    """
+    Get music recommendations based on emotion
+    """
+    try:
+        recommendations = spotify_service.get_recommendations_by_emotion(emotion)
+        return recommendations
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error getting recommendations: {str(e)}"
+        )
