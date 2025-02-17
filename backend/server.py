@@ -6,6 +6,12 @@ from starlette.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine, get_db
 from database import create_user, get_user_by_email, get_user_by_username
+from fastapi import FastAPI, WebSocket
+# from opencv.emotion_detect_shared import detect_emotion
+from spotify_code import SpotifyService
+# from opencv.emotion_detect_ws import detect_emotion
+# from deepface import DeepFace
+# from fastapi.websockets import WebSocketDisconnect
 
 app = FastAPI()
 
@@ -85,10 +91,71 @@ def login(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     except Exception as e:
         print(e)
         print("Error logging in")
+        
+@app.get("/get_emotion")
+def get_emotion(request: Request):
+    # gets the image file from the request
+    # convert the image to a numpy array
+    # decode the image
+    # perform emotion analysis
+    # send the emotion back to the client
+    frame   = request.file.read()
+    detect_emotion(frame)
+    return "Working"
+       
+        
+# @app.websocket("/emotion") # This tries to detect emotion directly from server (also Not working)
+# async def emotion_socket(websocket: WebSocket):
+#     await websocket.accept()
+#     emotion_list = []
+    
+#     try:
+#         while True:
+#             # Receive the frame
+#             frame = await websocket.receive_bytes()
+#             nparr = np.frombuffer(frame, np.uint8)
+#             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+#             # Perform emotion analysis
+#             try:
+#                 analysis = DeepFace.analyze(img, actions=['emotion'], enforce_detection=False)
+#                 emotion = analysis[0].get('dominant_emotion', 'Unknown')
+#                 await websocket.send_text(emotion)  # Send emotion back to client
+#                 break  # After sending the emotion, exit the loop
+
+#             except Exception as e:
+#                 await websocket.send_text(f"Error: {str(e)}")
+#                 break  # Exit on error
+                
+#     except Exception as e:
+#         print(f"Error during WebSocket connection: {str(e)}")
+#     finally:
+#         await websocket.close()  # Close the WebSocket connection after sending the response
 
 # Connect to Spotify
-@app.get("/connect_spotify")
-def connect_spotify(request: Request):
-    # Unimplemented
-    return "Connect Spotify"
 
+# HACKY WAY FOR NOW
+# IN Reality, there should be a procedure to let users login to spotify through the backend
+# @app.get("/get_reccomendations")
+# def connect_spotify(request: Request):
+    
+#     # Unimplemented
+#     return "Connect Spotify"
+spotify_service = SpotifyService()
+
+
+@app.get("/recommendations/{emotion}")
+async def get_recommendations(emotion: str):
+    """
+    Get music recommendations based on emotion
+    """
+    try:
+        recommendations = spotify_service.get_recommendations_by_emotion(emotion)
+        return recommendations
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error getting recommendations: {str(e)}"
+        )
